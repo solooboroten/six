@@ -62,8 +62,8 @@ Six provides constants that may differ between Python versions.  Ones ending
 
 .. data:: text_type
 
-   Type for representing textual data in Unicode.  This is :func:`py2:unicode`
-   in Python 2 and :func:`py3:str` in Python 3.
+   Type for representing (Unicode) textual data.  This is :func:`py2:unicode` in
+   Python 2 and :func:`py3:str` in Python 3.
 
 
 .. data:: binary_type
@@ -74,7 +74,11 @@ Six provides constants that may differ between Python versions.  Ones ending
 
 .. data:: MAXSIZE
 
-   The maximum size of a container.
+   The maximum size of a container.  This is equivalent to
+   :data:`py3:sys.maxsize` in Python 2.6 and later (including 3.x).  Note, this
+   is temptingly similar to, but not the same as :data:`py2:sys.maxint` in
+   Python 2.  There is no direct equivalent to :data:`py2:sys.maxint` in Python
+   3 because its integer type has no limits aside from memory.
 
 
 Here's example usage of the module::
@@ -141,7 +145,28 @@ functions and methods is the stdlib :mod:`py3:inspect` module.
 
 .. function:: callable(obj)
 
-   Check if *obj* can be called.
+   Check if *obj* can be called.  Note ``callable`` has returned in Python 3.2,
+   so using six's version is only necessary when supporting Python 3.0 or 3.1.
+
+
+.. function:: iterkeys(dictionary)
+
+   Returns an iterator over *dictionary*\'s keys. This replaces
+   ``dictionary.iterkeys()`` on Python 2 and ``dictionary.keys()`` on Python 3.
+
+
+.. function:: itervalues(dictionary)
+
+   Returns an iterator over *dictionary*\'s values. This replaces
+   ``dictionary.itervalues()`` on Python 2 and ``dictionary.values()`` on
+   Python 3.
+
+
+.. function:: iteritems(dictionary)
+
+   Returns an iterator over *dictionary*\'s items. This replaces
+   ``dictionary.iteritems()`` on Python 2 and ``dictionary.items()`` on
+   Python 3.
 
 
 Syntax compatibility
@@ -154,7 +179,7 @@ Python 2 and 3.
 .. function:: exec_(code, globals=None, locals=None)
 
    Execute *code* in the scope of *globals* and *locals*.  *code* can be a
-   string or a code object.  If *globals* or *locals* is not given, they will
+   string or a code object.  If *globals* or *locals* are not given, they will
    default to the scope of the caller.  If just *globals* is given, it will also
    be used as *locals*.
 
@@ -199,9 +224,10 @@ Python 2 and 3.
 Binary and text data
 >>>>>>>>>>>>>>>>>>>>
 
-Python 3 enforces the distinction between far more rigoriously than does Python
-2; binary data cannot be automatically coerced text data.  six provides the
-several functions to assist in classifying string data in all Python versions.
+Python 3 enforces the distinction between byte strings and text strings far more
+rigoriously than Python 2 does; binary data cannot be automatically coerced to
+or from text data.  six provides several functions to assist in classifying
+string data in all Python versions.
 
 
 .. function:: b(data)
@@ -214,7 +240,15 @@ several functions to assist in classifying string data in all Python versions.
 .. function:: u(text)
 
    A "fake" unicode literal.  *text* should always be a normal string literal.
-   In Python 2, :func:`u` returns unicode, and in Python 3, a string.
+   In Python 2, :func:`u` returns unicode, and in Python 3, a string.  Also, in
+   Python 2, the string is decoded with the ``unicode-escape`` codec, which
+   allows unicode escapes to be used in it.
+
+
+.. function:: int2byte(i)
+
+   Converts *i* to a byte.  *i* must be in ``range(0, 256)``.  This is
+   equivalent to :class:`py2:chr` in Python 2 and ``bytes((i,))`` in Python 3.
 
 
 .. data:: StringIO
@@ -258,7 +292,7 @@ running on Python 2.  For example, ``BaseHTTPServer`` which is in
 ``http.server`` in Python 3 is aliased as ``BaseHTTPServer``.
 
 Some modules which had two implementations have been merged in Python 3.  For
-example, ``cPickle`` no longer exists in Python 3.  It's been merged with
+example, ``cPickle`` no longer exists in Python 3; it was merged with
 ``pickle``.  In these cases, fetching the fast version will load the fast one on
 Python 2 and the merged module in Python 3.
 
@@ -285,6 +319,8 @@ Supported renames:
 +------------------------------+-------------------------------------+---------------------------------+
 | ``cStringIO``                | :func:`py2:cStringIO.StringIO`      | :class:`py3:io.StringIO`        |
 +------------------------------+-------------------------------------+---------------------------------+
+| ``filter``                   | :func:`py2:itertools.ifilter`       | :func:`py3:filter`              |
++------------------------------+-------------------------------------+---------------------------------+
 | ``http_cookiejar``           | :mod:`py2:cookielib`                | :mod:`py3:http.cookiejar`       |
 +------------------------------+-------------------------------------+---------------------------------+
 | ``http_cookies``             | :mod:`py2:Cookie`                   | :mod:`py3:http.cookies`         |
@@ -300,6 +336,8 @@ Supported renames:
 | ``CGIHTTPServer``            | :mod:`py2:CGIHTTPServer`            | :mod:`py3:http.server`          |
 +------------------------------+-------------------------------------+---------------------------------+
 | ``SimpleHTTPServer``         | :mod:`py2:SimpleHTTPServer`         | :mod:`py3:http.server`          |
++------------------------------+-------------------------------------+---------------------------------+
+| ``map``                      | :mod:`py2:itertools.imap`           | :mod:`py3:map`                  |
 +------------------------------+-------------------------------------+---------------------------------+
 | ``queue``                    | :mod:`py2:Queue`                    | :mod:`py3:queue`                |
 +------------------------------+-------------------------------------+---------------------------------+
@@ -345,7 +383,8 @@ Supported renames:
 +------------------------------+-------------------------------------+---------------------------------+
 | ``xrange``                   | :func:`py2:xrange`                  | :func:`py3:range`               |
 +------------------------------+-------------------------------------+---------------------------------+
-
+| ``zip``                      | :func:`py2:itertools.izip`          | :func:`py3:zip`                 |
++------------------------------+-------------------------------------+---------------------------------+
 
 Advanced - Customizing renames
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

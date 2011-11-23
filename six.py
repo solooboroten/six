@@ -1,10 +1,11 @@
 """Utilities for writing code that runs on Python 2 and 3"""
 
+import operator
 import sys
 import types
 
 __author__ = "Benjamin Peterson <benjamin@python.org>"
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 
 # True if we are running on Python 3.
@@ -25,7 +26,19 @@ else:
     text_type = unicode
     binary_type = str
 
-    MAXSIZE = sys.maxint
+    # It's possible to have sizeof(long) != sizeof(Py_ssize_t).
+    class X(object):
+        def __len__(self):
+            return 1 << 31
+    try:
+        len(X())
+    except OverflowError:
+        # 32-bit
+        MAXSIZE = int((1 << 31) - 1)
+    else:
+        # 64-bit
+        MAXSIZE = int((1 << 63) - 1)
+    del X
 
 
 def _add_doc(func, doc):
@@ -99,10 +112,13 @@ class _MovedItems(types.ModuleType):
 
 _moved_attributes = [
     MovedAttribute("cStringIO", "cStringIO", "io", "StringIO"),
+    MovedAttribute("filter", "itertools", "builtins", "ifilter", "filter"),
+    MovedAttribute("map", "itertools", "builtins", "imap", "map"),
     MovedAttribute("reload_module", "__builtin__", "imp", "reload"),
     MovedAttribute("reduce", "__builtin__", "functools"),
     MovedAttribute("StringIO", "StringIO", "io"),
     MovedAttribute("xrange", "__builtin__", "builtins", "xrange", "range"),
+    MovedAttribute("zip", "itertools", "builtins", "izip", "zip"),
 
     MovedModule("builtins", "__builtin__"),
     MovedModule("configparser", "ConfigParser"),
@@ -168,12 +184,20 @@ if PY3:
 
     _func_code = "__code__"
     _func_defaults = "__defaults__"
+
+    _iterkeys = "keys"
+    _itervalues = "values"
+    _iteritems = "items"
 else:
     _meth_func = "im_func"
     _meth_self = "im_self"
 
     _func_code = "func_code"
     _func_defaults = "func_defaults"
+
+    _iterkeys = "iterkeys"
+    _itervalues = "itervalues"
+    _iteritems = "iteritems"
 
 
 if PY3:
@@ -198,24 +222,23 @@ _add_doc(get_unbound_function,
          """Get the function out of a possibly unbound function""")
 
 
-def get_method_function(meth):
-    """Get the underlying function of a bound method."""
-    return getattr(meth, _meth_func)
+get_method_function = operator.attrgetter(_meth_func)
+get_method_self = operator.attrgetter(_meth_self)
+get_function_code = operator.attrgetter(_func_code)
+get_function_defaults = operator.attrgetter(_func_defaults)
 
 
-def get_method_self(meth):
-    """Get the self of a bound method."""
-    return getattr(meth, _meth_self)
+def iterkeys(d):
+    """Return an iterator over the keys of a dictionary."""
+    return getattr(d, _iterkeys)()
 
+def itervalues(d):
+    """Return an iterator over the values of a dictionary."""
+    return getattr(d, _itervalues)()
 
-def get_function_code(func):
-    """Get code object of a function."""
-    return getattr(func, _func_code)
-
-
-def get_function_defaults(func):
-    """Get defaults of a function."""
-    return getattr(func, _func_defaults)
+def iteritems(d):
+    """Return an iterator over the (key, value) pairs of a dictionary."""
+    return getattr(d, _iteritems)()
 
 
 if PY3:
@@ -223,6 +246,12 @@ if PY3:
         return s.encode("latin-1")
     def u(s):
         return s
+    if sys.version_info[1] <= 1:
+        def int2byte(i):
+            return bytes((i,))
+    else:
+        # This is about 2x faster than the implementation above on 3.2+
+        int2byte = operator.methodcaller("to_bytes", 1, "big")
     import io
     StringIO = io.StringIO
     BytesIO = io.BytesIO
@@ -231,6 +260,7 @@ else:
         return s
     def u(s):
         return unicode(s, "unicode_escape")
+    int2byte = chr
     import StringIO
     StringIO = BytesIO = StringIO.StringIO
 _add_doc(b, """Byte literal""")
@@ -238,7 +268,8 @@ _add_doc(u, """Text literal""")
 
 
 if PY3:
-    exec_ = eval("exec")
+    import builtins
+    exec_ = getattr(builtins, "exec")
 
 
     def reraise(tp, value, tb=None):
@@ -247,15 +278,8 @@ if PY3:
         raise value
 
 
-    print_ = eval("print")
-
-
-    def with_metaclass(meta, base=object):
-        ns = dict(base=base, meta=meta)
-        exec_("""class NewBase(base, metaclass=meta):
-    pass""", ns)
-        return ns["NewBase"]
-
+    print_ = getattr(builtins, "print")
+    del builtins
 
 else:
     def exec_(code, globs=None, locs=None):
@@ -321,12 +345,9 @@ else:
             write(arg)
         write(end)
 
-
-    def with_metaclass(meta, base=object):
-        class NewBase(base):
-            __metaclass__ = meta
-        return NewBase
-
-
 _add_doc(reraise, """Reraise an exception.""")
-_add_doc(with_metaclass, """Create a base class with a metaclass""")
+
+
+def with_metaclass(meta, base=object):
+    """Create a base class with a metaclass."""
+    return meta("NewBase", (base,), {})
