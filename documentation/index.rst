@@ -9,7 +9,8 @@ Six: Python 2 and 3 Compatibility Library
 
 
 Six provides simple utilities for wrapping over differences between Python 2 and
-Python 3.
+Python 3.  It is intended to support codebases that work on both Python 2 and 3
+without modification.
 
 Six can be downloaded on `PyPi <http://pypi.python.org/pypi/six/>`_.  Its bug
 tracker and code hosting is on `BitBucket <http://bitbucket.org/gutworth/six>`_.
@@ -136,6 +137,7 @@ functions and methods is the stdlib :mod:`py3:inspect` module.
    Get the defaults tuple associated with *func*.
 
 
+.. function:: next(it)
 .. function:: advance_iterator(it)
 
    Get the next item of iterator *it*.  :exc:`py3:StopIteration` is raised if
@@ -167,6 +169,17 @@ functions and methods is the stdlib :mod:`py3:inspect` module.
    Returns an iterator over *dictionary*\'s items. This replaces
    ``dictionary.iteritems()`` on Python 2 and ``dictionary.items()`` on
    Python 3.
+
+
+.. class:: Iterator
+
+   A class for making portable iterators. The intention is that it be subclassed
+   and subclasses provide a ``__next__`` method. In Python 2, :class:`Iterator`
+   has one method: ``next``. It simply delegates to ``__next__``. An alternate
+   way to do this would be to simply alias ``next`` to ``__next__``. However,
+   this interacts badly with subclasses that override
+   ``__next__``. :class:`Iterator` is empty on Python 3. (In fact, it is just
+   aliased to :class:`py3:object`.)
 
 
 Syntax compatibility
@@ -243,6 +256,15 @@ string data in all Python versions.
    In Python 2, :func:`u` returns unicode, and in Python 3, a string.  Also, in
    Python 2, the string is decoded with the ``unicode-escape`` codec, which
    allows unicode escapes to be used in it.
+
+
+   .. note::
+
+      In Python 3.3, the ``u`` prefix has been reintroduced. Code that only
+      supports Python 3 versions greater than 3.3 thus does not need
+      :func:`u`. Additionally, since all Python versions 2.6 and after support
+      the ``b`` prefix, :func:`b`, code without 2.5 support doesn't need
+      :func:`b`.
 
 
 .. function:: int2byte(i)
@@ -337,7 +359,9 @@ Supported renames:
 +------------------------------+-------------------------------------+---------------------------------+
 | ``SimpleHTTPServer``         | :mod:`py2:SimpleHTTPServer`         | :mod:`py3:http.server`          |
 +------------------------------+-------------------------------------+---------------------------------+
-| ``map``                      | :mod:`py2:itertools.imap`           | :mod:`py3:map`                  |
+| ``input``                    | :func:`py2:raw_input`               | :func:`py3:input`               |
++------------------------------+-------------------------------------+---------------------------------+
+| ``map``                      | :func:`py2:itertools.imap`          | :func:`py3:map`                 |
 +------------------------------+-------------------------------------+---------------------------------+
 | ``queue``                    | :mod:`py2:Queue`                    | :mod:`py3:queue`                |
 +------------------------------+-------------------------------------+---------------------------------+
