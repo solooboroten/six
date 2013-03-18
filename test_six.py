@@ -77,6 +77,13 @@ def test_lazy():
     assert "htmlparser" not in six._MovedItems.__dict__
 
 
+try:
+    import _tkinter
+except ImportError:
+    have_tkinter = False
+else:
+    have_tkinter = True
+
 @py.test.mark.parametrize("item_name",
                           [item.name for item in six._moved_attributes])
 def test_move_items(item_name):
@@ -86,7 +93,7 @@ def test_move_items(item_name):
     except ImportError:
         if item_name == "winreg" and not sys.platform.startswith("win"):
             py.test.skip("Windows only module")
-        if "_tkinter" in str(sys.exc_info()[1]):
+        if item_name.startswith("tkinter") and not have_tkinter:
             py.test.skip("requires tkinter")
         raise
 
@@ -204,11 +211,22 @@ def test_get_method_function():
     py.test.raises(AttributeError, six.get_method_function, hasattr)
 
 
+def test_get_function_closure():
+    def f():
+        x = 42
+        def g():
+            return x
+        return g
+    cell = six.get_function_closure(f())[0]
+    assert type(cell).__name__ == "cell"
+
+
 def test_get_function_code():
     def f():
         pass
     assert isinstance(six.get_function_code(f), types.CodeType)
-    py.test.raises(AttributeError, six.get_function_code, hasattr)
+    if not hasattr(sys, "pypy_version_info"):
+        py.test.raises(AttributeError, six.get_function_code, hasattr)
 
 
 def test_get_function_defaults():
@@ -217,13 +235,38 @@ def test_get_function_defaults():
     assert six.get_function_defaults(f) == (3, 4)
 
 
-def test_dictionary_iterators():
-    d = dict(zip(range(10), reversed(range(10))))
-    for name in "keys", "values", "items":
-        it = getattr(six, "iter" + name)(d)
+def test_get_function_globals():
+    def f():
+        pass
+    assert six.get_function_globals(f) is globals()
+
+
+def test_dictionary_iterators(monkeypatch):
+    class MyDict(dict):
+        if not six.PY3:
+            def lists(self, **kw):
+                return [1, 2, 3]
+        def iterlists(self, **kw):
+            return iter([1, 2, 3])
+    f = MyDict.iterlists
+    del MyDict.iterlists
+    setattr(MyDict, six._iterlists, f)
+    d = MyDict(zip(range(10), reversed(range(10))))
+    for name in "keys", "values", "items", "lists":
+        meth = getattr(six, "iter" + name)
+        it = meth(d)
         assert not isinstance(it, list)
         assert list(it) == list(getattr(d, name)())
         py.test.raises(StopIteration, six.advance_iterator, it)
+        record = []
+        def with_kw(*args, **kw):
+            record.append(kw["kw"])
+            return old(*args)
+        old = getattr(MyDict, getattr(six, "_iter" + name))
+        monkeypatch.setattr(MyDict, getattr(six, "_iter" + name), with_kw)
+        meth(d, kw=42)
+        assert record == [42]
+        monkeypatch.undo()
 
 
 def test_advance_iterator():

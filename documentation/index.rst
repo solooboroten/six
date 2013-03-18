@@ -10,7 +10,8 @@ Six: Python 2 and 3 Compatibility Library
 
 Six provides simple utilities for wrapping over differences between Python 2 and
 Python 3.  It is intended to support codebases that work on both Python 2 and 3
-without modification.
+without modification.  six consists of only one Python file, so it is painless
+to copy into a project.
 
 Six can be downloaded on `PyPi <http://pypi.python.org/pypi/six/>`_.  Its bug
 tracker and code hosting is on `BitBucket <http://bitbucket.org/gutworth/six>`_.
@@ -127,14 +128,31 @@ functions and methods is the stdlib :mod:`py3:inspect` module.
    Get the ``self`` of bound method *meth*.
 
 
+.. function:: get_function_closure(func)
+
+   Get the closure (list of cells) associated with *func*.  This is equivalent
+   to ``func.__closure__`` on Python 2.6+ and ``func.func_closure`` on Python
+   2.4 and 2.5.
+
+
 .. function:: get_function_code(func)
 
-   Get the code object associated with *func*.
+   Get the code object associated with *func*.  This is equivalent to
+   ``func.__code__`` on Python 2.6+ and ``func.func_code`` on Python 2.4 and
+   2.5.
 
 
 .. function:: get_function_defaults(func)
 
-   Get the defaults tuple associated with *func*.
+   Get the defaults tuple associated with *func*.  This is equivalent to
+   ``func.__defaults__`` on Python 2.6+ and ``func.func_defaults`` on Python 2.4
+   and 2.5.
+
+
+.. function:: get_function_globals(func)
+
+   Get the globals of *func*.  This is equivalent to ``func.__globals__`` on
+   Python 2.6+ and ``func.func_globals`` on Python 2.4 and 2.5.
 
 
 .. function:: next(it)
@@ -151,24 +169,34 @@ functions and methods is the stdlib :mod:`py3:inspect` module.
    so using six's version is only necessary when supporting Python 3.0 or 3.1.
 
 
-.. function:: iterkeys(dictionary)
+.. function:: iterkeys(dictionary, **kwargs)
 
    Returns an iterator over *dictionary*\'s keys. This replaces
-   ``dictionary.iterkeys()`` on Python 2 and ``dictionary.keys()`` on Python 3.
+   ``dictionary.iterkeys()`` on Python 2 and ``dictionary.keys()`` on
+   Python 3.  *kwargs* are passed through to the underlying method.
 
 
-.. function:: itervalues(dictionary)
+.. function:: itervalues(dictionary, **kwargs)
 
    Returns an iterator over *dictionary*\'s values. This replaces
    ``dictionary.itervalues()`` on Python 2 and ``dictionary.values()`` on
-   Python 3.
+   Python 3.  *kwargs* are passed through to the underlying method.
 
 
-.. function:: iteritems(dictionary)
+.. function:: iteritems(dictionary, **kwargs)
 
    Returns an iterator over *dictionary*\'s items. This replaces
    ``dictionary.iteritems()`` on Python 2 and ``dictionary.items()`` on
-   Python 3.
+   Python 3.  *kwargs* are passed through to the underlying method.
+
+
+.. function:: iterlists(dictionary, **kwargs)
+
+   Calls ``dictionary.iterlists()`` on Python 2 and ``dictionary.lists()`` on
+   Python 3.  No builtin Python mapping type has such a method; this method is
+   intended for use with multi-valued dictionaries like `Werkzeug's
+   <http://werkzeug.pocoo.org/docs/datastructures/#werkzeug.datastructures.MultiDict>`_.
+   *kwargs* are passed through to the underlying method.
 
 
 .. class:: Iterator
@@ -195,6 +223,11 @@ Python 2 and 3.
    string or a code object.  If *globals* or *locals* are not given, they will
    default to the scope of the caller.  If just *globals* is given, it will also
    be used as *locals*.
+
+   .. note::
+
+      Python 3's :func:`py3:exec` doesn't take keyword arguments, so calling
+      :func:`exec` with them should be avoided.
 
 
 .. function:: print_(*args, *, file=sys.stdout, end="\n", sep=" ")
@@ -250,6 +283,12 @@ string data in all Python versions.
    with the latin-1 encoding to bytes.
 
 
+.. note::
+
+      Since all Python versions 2.6 and after support the ``b`` prefix,
+      :func:`b`, code without 2.5 support doesn't need :func:`b`.
+
+
 .. function:: u(text)
 
    A "fake" unicode literal.  *text* should always be a normal string literal.
@@ -262,9 +301,14 @@ string data in all Python versions.
 
       In Python 3.3, the ``u`` prefix has been reintroduced. Code that only
       supports Python 3 versions greater than 3.3 thus does not need
-      :func:`u`. Additionally, since all Python versions 2.6 and after support
-      the ``b`` prefix, :func:`b`, code without 2.5 support doesn't need
-      :func:`b`.
+      :func:`u`.
+
+   .. note::
+
+      On Python 2, :func:`u` doesn't know what the encoding of the literal
+      is. Each byte is converted directly to the unicode codepoint of the same
+      value. Because of this, it's only safe to use :func:`u` with strings of
+      ASCII data.
 
 
 .. function:: int2byte(i)
@@ -340,6 +384,12 @@ Supported renames:
 | ``cPickle``                  | :mod:`py2:cPickle`                  | :mod:`py3:pickle`               |
 +------------------------------+-------------------------------------+---------------------------------+
 | ``cStringIO``                | :func:`py2:cStringIO.StringIO`      | :class:`py3:io.StringIO`        |
++------------------------------+-------------------------------------+---------------------------------+
+| ``email_mime_multipart``     | :mod:`py2:email.MIMEMultipart`      | :mod:`py3:email.mime.multipart` |
++------------------------------+-------------------------------------+---------------------------------+
+| ``email_mime_text``          | :mod:`py2:email.MIMEText`           | :mod:`py3:email.mime.text`      |
++------------------------------+-------------------------------------+---------------------------------+
+| ``email_mime_base``          | :mod:`py2:email.MIMEBase`           | :mod:`py3:email.mime.base`      |
 +------------------------------+-------------------------------------+---------------------------------+
 | ``filter``                   | :func:`py2:itertools.ifilter`       | :func:`py3:filter`              |
 +------------------------------+-------------------------------------+---------------------------------+
