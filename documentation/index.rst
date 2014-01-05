@@ -17,8 +17,8 @@ Six can be downloaded on `PyPi <http://pypi.python.org/pypi/six/>`_.  Its bug
 tracker and code hosting is on `BitBucket <http://bitbucket.org/gutworth/six>`_.
 
 The name, "six", comes from the fact that 2*3 equals 6.  Why not addition?
-Multiplication is more powerful, and, anyway, "five" has already been `snatched
-away <http://codespeak.net/z3/five/>`_.
+Multiplication is more powerful, and, anyway, "five" has already been snatched
+away by the Zope Five project.
 
 
 Indices and tables
@@ -137,27 +137,26 @@ functions and methods is the stdlib :mod:`py3:inspect` module.
 
    Get the closure (list of cells) associated with *func*.  This is equivalent
    to ``func.__closure__`` on Python 2.6+ and ``func.func_closure`` on Python
-   2.4 and 2.5.
+   2.5.
 
 
 .. function:: get_function_code(func)
 
    Get the code object associated with *func*.  This is equivalent to
-   ``func.__code__`` on Python 2.6+ and ``func.func_code`` on Python 2.4 and
-   2.5.
+   ``func.__code__`` on Python 2.6+ and ``func.func_code`` on Python 2.5.
 
 
 .. function:: get_function_defaults(func)
 
    Get the defaults tuple associated with *func*.  This is equivalent to
-   ``func.__defaults__`` on Python 2.6+ and ``func.func_defaults`` on Python 2.4
-   and 2.5.
+   ``func.__defaults__`` on Python 2.6+ and ``func.func_defaults`` on Python
+   2.5.
 
 
 .. function:: get_function_globals(func)
 
    Get the globals of *func*.  This is equivalent to ``func.__globals__`` on
-   Python 2.6+ and ``func.func_globals`` on Python 2.4 and 2.5.
+   Python 2.6+ and ``func.func_globals`` on Python 2.5.
 
 
 .. function:: next(it)
@@ -243,10 +242,10 @@ Python 2 and 3.
       :func:`exec` with them should be avoided.
 
 
-.. function:: print_(*args, *, file=sys.stdout, end="\n", sep=" ")
+.. function:: print_(*args, *, file=sys.stdout, end="\\n", sep=" ")
 
    Print *args* into *file*.  Each argument will be separated with *sep* and
-   *end* will be written to the file at the last.
+   *end* will be written to the file after the last argument is printed.
 
    .. note::
 
@@ -307,7 +306,7 @@ Python 2 and 3.
    on Python 2.
 
    Note that class decorators require Python 2.6. However, the effect of the
-   decorator can be emulated on Python 2.4 and 2.5 like so::
+   decorator can be emulated on Python 2.5 like so::
 
        class MyClass(object):
            pass
@@ -433,13 +432,11 @@ example, ``cPickle`` no longer exists in Python 3; it was merged with
 ``pickle``.  In these cases, fetching the fast version will load the fast one on
 Python 2 and the merged module in Python 3.
 
-
-.. note::
-
-   The :mod:`py2:urllib`, :mod:`py2:urllib2`, and :mod:`py2:urlparse` modules
-   have been combined in the :mod:`py3:urllib` package in Python 3.
-   :mod:`six.moves` doesn't not support their renaming because their members
-   have been mixed across several modules in that package.
+The :mod:`py2:urllib`, :mod:`py2:urllib2`, and :mod:`py2:urlparse` modules have
+been combined in the :mod:`py3:urllib` package in Python 3.  The
+:mod:`six.moves.urllib` package is a version-independent location for this
+functionality; its structure mimics the structure of the Python 3
+:mod:`py3:urllib` package.
 
 Supported renames:
 
@@ -455,6 +452,8 @@ Supported renames:
 | ``cPickle``                  | :mod:`py2:cPickle`                  | :mod:`py3:pickle`                   |
 +------------------------------+-------------------------------------+-------------------------------------+
 | ``cStringIO``                | :func:`py2:cStringIO.StringIO`      | :class:`py3:io.StringIO`            |
++------------------------------+-------------------------------------+-------------------------------------+
+| ``dbm_gnu``                  | :func:`py2:gdbm`                    | :class:`py3:dbm.gnu`                |
 +------------------------------+-------------------------------------+-------------------------------------+
 | ``email_mime_multipart``     | :mod:`py2:email.MIMEMultipart`      | :mod:`py3:email.mime.multipart`     |
 +------------------------------+-------------------------------------+-------------------------------------+
@@ -498,15 +497,19 @@ Supported renames:
 +------------------------------+-------------------------------------+-------------------------------------+
 | ``socketserver``             | :mod:`py2:SocketServer`             | :mod:`py3:socketserver`             |
 +------------------------------+-------------------------------------+-------------------------------------+
+| ``_thread``                  | :mod:`py2:thread`                   | :mod:`py3:_thread`                  |
++------------------------------+-------------------------------------+-------------------------------------+
 | ``tkinter``                  | :mod:`py2:Tkinter`                  | :mod:`py3:tkinter`                  |
 +------------------------------+-------------------------------------+-------------------------------------+
 | ``tkinter_dialog``           | :mod:`py2:Dialog`                   | :mod:`py3:tkinter.dialog`           |
 +------------------------------+-------------------------------------+-------------------------------------+
 | ``tkinter_filedialog``       | :mod:`py2:FileDialog`               | :mod:`py3:tkinter.FileDialog`       |
 +------------------------------+-------------------------------------+-------------------------------------+
-| ``tkinter_scrolledtext``     | :mod:`py2:ScrolledText`             | :mod:`py3:tkinter.scolledtext`      |
+| ``tkinter_scrolledtext``     | :mod:`py2:ScrolledText`             | :mod:`py3:tkinter.scrolledtext`     |
 +------------------------------+-------------------------------------+-------------------------------------+
-| ``tkinter_simpledialog``     | :mod:`py2:SimpleDialog`             | :mod:`py2:tkinter.simpledialog`     |
+| ``tkinter_simpledialog``     | :mod:`py2:SimpleDialog`             | :mod:`py3:tkinter.simpledialog`     |
++------------------------------+-------------------------------------+-------------------------------------+
+| ``tkinter_ttk``              | :mod:`py2:ttk`                      | :mod:`py3:tkinter.ttk`              |
 +------------------------------+-------------------------------------+-------------------------------------+
 | ``tkinter_tix``              | :mod:`py2:Tix`                      | :mod:`py3:tkinter.tix`              |
 +------------------------------+-------------------------------------+-------------------------------------+
@@ -542,6 +545,8 @@ Supported renames:
 +------------------------------+-------------------------------------+-------------------------------------+
 | ``winreg``                   | :mod:`py2:_winreg`                  | :mod:`py3:winreg`                   |
 +------------------------------+-------------------------------------+-------------------------------------+
+| ``xmlrpc_client``            | :mod:`py2:xmlrpclib`                | :mod:`py3:xmlrpclib`                |
++------------------------------+-------------------------------------+-------------------------------------+
 | ``xrange``                   | :func:`py2:xrange`                  | :func:`py3:range`                   |
 +------------------------------+-------------------------------------+-------------------------------------+
 | ``zip``                      | :func:`py2:itertools.izip`          | :func:`py3:zip`                     |
@@ -559,6 +564,7 @@ Contains functions from Python 3's :mod:`py3:urllib.parse` and Python 2's:
 
 :mod:`py2:urlparse`:
 
+* :func:`py2:urlparse.ParseResult`
 * :func:`py2:urlparse.urlparse`
 * :func:`py2:urlparse.urlunparse`
 * :func:`py2:urlparse.parse_qs`
@@ -612,6 +618,7 @@ Contains items from Python 3's :mod:`py3:urllib.request` and Python 2's:
 * :func:`py2:urllib.urlcleanup`
 * :class:`py2:urllib.URLopener`
 * :class:`py2:urllib.FancyURLopener`
+* :func:`py2:urllib.proxy_bypass`
 
 and :mod:`py2:urllib2`:
 

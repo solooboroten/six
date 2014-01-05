@@ -3,6 +3,37 @@ Changelog for Six
 
 This file lists the changes in each six version.
 
+1.5.0
+-----
+
+- Removed support for Python 2.4. This is because py.test no longer supports
+  2.4.
+
+- Fix various import problems including issues #19 and #41. six.moves modules
+  are now lazy wrappers over the underlying modules instead of the actual
+  modules themselves.
+
+- Issue #49: Add six.moves mapping for tkinter.ttk.
+
+- Pull request #24: Add __dir__ special method to six.moves modules.
+
+- Issue #47: Fix add_metaclass on classes with a string for the __slots__
+  variable.
+
+- Issue #44: Fix interpretation of backslashes on Python 2 in the u() function.
+
+- Pull request #21: Add import mapping for urllib's proxy_bypass function.
+
+- Issue #43: Add import mapping for the Python 2 xmlrpclib module.
+
+- Issue #39: Add import mapping for the Python 2 thread module.
+
+- Issue #40: Add import mapping for the Python 2 gdbm module.
+
+- Issue #35: On Python versions less than 2.7, print_ now encodes unicode
+  strings when outputing to standard streams. (Python 2.7 handles this
+  automatically.)
+
 1.4.1
 -----
 
