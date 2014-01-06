@@ -25,7 +25,7 @@ import sys
 import types
 
 __author__ = "Benjamin Peterson <benjamin@python.org>"
-__version__ = "1.5.1"
+__version__ = "1.5.2"
 
 
 # Useful for very coarse version differentiation.
@@ -106,11 +106,12 @@ class MovedModule(_LazyDescr):
 
     def __getattr__(self, attr):
         # Hack around the Django autoreloader. The reloader tries to get
-        # __file__ of every module in sys.modules. This doesn't work well if
-        # this MovedModule is for an module that is unavailable on this machine
-        # (like winreg on Unix systems). Thus, we pretend __file__ doesn't exist
-        # if the module hasn't been loaded yet. See issue #51.
-        if attr == "__file__" and self.mod not in sys.modules:
+        # __file__ or __name__ of every module in sys.modules. This doesn't work
+        # well if this MovedModule is for an module that is unavailable on this
+        # machine (like winreg on Unix systems). Thus, we pretend __file__ and
+        # __name__ don't exist if the module hasn't been loaded yet. See issues
+        # #51 and #53.
+        if attr in ("__file__", "__name__") and self.mod not in sys.modules:
             raise AttributeError
         _module = self._resolve()
         value = getattr(_module, attr)
