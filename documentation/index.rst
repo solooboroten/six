@@ -438,6 +438,28 @@ been combined in the :mod:`py3:urllib` package in Python 3.  The
 functionality; its structure mimics the structure of the Python 3
 :mod:`py3:urllib` package.
 
+.. note::
+
+   In order to make imports of the form::
+
+     from six.moves.cPickle import loads
+
+   work, six places special proxy objects in in :data:`py3:sys.modules`. These
+   proxies lazily load the underlying module when an attribute is fetched. This
+   will fail if the underlying module is not available in the Python
+   interpreter. For example, ``sys.modules["six.moves.winreg"].LoadKey`` would
+   fail on any non-Windows platform. Unfortunately, some applications try to
+   load attributes on every module in :data:`py3:sys.modules`. six mitigates
+   this problem for some applications by pretending attributes on unimportable
+   modules don't exist. This hack doesn't work in every case, though. If you are
+   encountering problems with the lazy modules and don't use any from imports
+   directly from ``six.moves`` modules, you can workaround the issue by removing
+   the six proxy modules::
+
+     d = [name for name in sys.modules if name.startswith("six.moves.")]
+     for name in d:
+         del sys.modules[name]
+
 Supported renames:
 
 +------------------------------+-------------------------------------+-------------------------------------+
@@ -545,7 +567,9 @@ Supported renames:
 +------------------------------+-------------------------------------+-------------------------------------+
 | ``winreg``                   | :mod:`py2:_winreg`                  | :mod:`py3:winreg`                   |
 +------------------------------+-------------------------------------+-------------------------------------+
-| ``xmlrpc_client``            | :mod:`py2:xmlrpclib`                | :mod:`py3:xmlrpclib`                |
+| ``xmlrpc_client``            | :mod:`py2:xmlrpclib`                | :mod:`py3:xmlrpc.client`            |
++------------------------------+-------------------------------------+-------------------------------------+
+| ``xmlrpc_server``            | :mod:`py2:SimpleXMLRPCServer`       | :mod:`py3:xmlrpc.server`            |
 +------------------------------+-------------------------------------+-------------------------------------+
 | ``xrange``                   | :func:`py2:xrange`                  | :func:`py3:range`                   |
 +------------------------------+-------------------------------------+-------------------------------------+
@@ -565,6 +589,7 @@ Contains functions from Python 3's :mod:`py3:urllib.parse` and Python 2's:
 :mod:`py2:urlparse`:
 
 * :func:`py2:urlparse.ParseResult`
+* :func:`py2:urlparse.SplitResult`
 * :func:`py2:urlparse.urlparse`
 * :func:`py2:urlparse.urlunparse`
 * :func:`py2:urlparse.parse_qs`
@@ -573,6 +598,7 @@ Contains functions from Python 3's :mod:`py3:urllib.parse` and Python 2's:
 * :func:`py2:urlparse.urldefrag`
 * :func:`py2:urlparse.urlsplit`
 * :func:`py2:urlparse.urlunsplit`
+* :func:`py2:urlparse.splitquery`
 
 and :mod:`py2:urllib`:
 
