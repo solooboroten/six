@@ -10,7 +10,7 @@
 
 Name:           python-six
 Version:        1.6.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 Group:          Development/Languages
@@ -94,6 +94,9 @@ popd
 
 
 %changelog
+* Thu May 08 2014 Orion Poplawski <orion@cora.nwra.com> - 1.6.1-2
+- Rebuild for Python 3.4
+
 * Tue Apr 29 2014 Matthias Runge <mrugne@redhat.com> - 1.6.1-1
 - upgrade to 1.6.1 (rhbz#1076578)
 
