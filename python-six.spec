@@ -10,7 +10,7 @@
 
 Name:           python-six
 Version:        1.7.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 Group:          Development/Languages
@@ -83,17 +83,24 @@ popd
 
 
 %files
-%doc LICENSE README documentation/index.rst
+%{!?_licensedir:%global license %%doc}
+%license LICENSE
+%doc README documentation/index.rst
 %{python_sitelib}/*
 
 %if 0%{?with_python3}
 %files -n python3-six
-%doc LICENSE README documentation/index.rst
+%{!?_licensedir:%global license %%doc}
+%license LICENSE
+%doc README documentation/index.rst
 %{python3_sitelib}/*
 %endif
 
 
 %changelog
+* Sun Aug  3 2014 Tom Callaway <spot@fedoraproject.org> - 1.7.3-2
+- fix license handling
+
 * Thu Jul 31 2014 Pádraig Brady <pbrady@redhat.com> - 1.7.3-1
 - Latest upstream
 
