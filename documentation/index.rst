@@ -222,7 +222,7 @@ functions and methods is the stdlib :mod:`py3:inspect` module.
    aliased to :class:`py3:object`.)
 
 
-.. function:: wraps(wrapped)
+.. function:: wraps(wrapped, assigned=functools.WRAPPER_ASSIGNMENTS, updated=functools.WRAPPER_UPDATES)
 
    This is exactly the :func:`py3:functools.wraps` decorator, but it sets the
    ``__wrapped__`` attribute on what it decorates as :func:`py3:functools.wraps`
@@ -266,7 +266,10 @@ Python 2 and 3.
    Reraise an exception, possibly with a different traceback.  In the simple
    case, ``reraise(*sys.exc_info())`` with an active exception (in an except
    block) reraises the current exception with the last traceback.  A different
-   traceback can be specified with the *exc_traceback* parameter.
+   traceback can be specified with the *exc_traceback* parameter.  Note that
+   since the exception reraising is done within the :func:`reraise` function,
+   Python will attach the call frame of :func:`reraise` to whatever traceback is
+   raised.
 
 
 .. function:: with_metaclass(metaclass, *bases)
@@ -292,9 +295,7 @@ Python 2 and 3.
 .. function:: add_metaclass(metaclass)
 
    Class decorator that replaces a normally-constructed class with a
-   metaclass-constructed one.  Unlike :func:`with_metaclass`,
-   :func:`add_metaclass` does not create an intermediate base class between the
-   class being created and its bases. Example usage: ::
+   metaclass-constructed one.  Example usage: ::
 
        @add_metaclass(Meta)
        class MyClass(object):
@@ -488,6 +489,8 @@ Supported renames:
 +------------------------------+-------------------------------------+-------------------------------------+
 | ``email_mime_multipart``     | :mod:`py2:email.MIMEMultipart`      | :mod:`py3:email.mime.multipart`     |
 +------------------------------+-------------------------------------+-------------------------------------+
+| ``email_mime_nonmultipart``  | :mod:`py2:email.MIMENonMultipart`   | :mod:`py3:email.mime.nonmultipart`  |
++------------------------------+-------------------------------------+-------------------------------------+
 | ``email_mime_text``          | :mod:`py2:email.MIMEText`           | :mod:`py3:email.mime.text`          |
 +------------------------------+-------------------------------------+-------------------------------------+
 | ``email_mime_base``          | :mod:`py2:email.MIMEBase`           | :mod:`py3:email.mime.base`          |
@@ -514,6 +517,8 @@ Supported renames:
 +------------------------------+-------------------------------------+-------------------------------------+
 | ``input``                    | :func:`py2:raw_input`               | :func:`py3:input`                   |
 +------------------------------+-------------------------------------+-------------------------------------+
+| ``intern``                   | :func:`py2:intern`                  | :func:`py3:sys.intern`              |
++------------------------------+-------------------------------------+-------------------------------------+
 | ``map``                      | :func:`py2:itertools.imap`          | :func:`py3:map`                     |
 +------------------------------+-------------------------------------+-------------------------------------+
 | ``queue``                    | :mod:`py2:Queue`                    | :mod:`py3:queue`                    |
@@ -525,6 +530,8 @@ Supported renames:
 | ``reload_module``            | :func:`py2:reload`                  | :func:`py3:imp.reload`              |
 +------------------------------+-------------------------------------+-------------------------------------+
 | ``reprlib``                  | :mod:`py2:repr`                     | :mod:`py3:reprlib`                  |
++------------------------------+-------------------------------------+-------------------------------------+
+| ``shlex_quote``              | :mod:`py2:pipes.quote`              | :mod:`py3:shlex.quote`              |
 +------------------------------+-------------------------------------+-------------------------------------+
 | ``socketserver``             | :mod:`py2:SocketServer`             | :mod:`py3:socketserver`             |
 +------------------------------+-------------------------------------+-------------------------------------+
@@ -612,11 +619,18 @@ Contains functions from Python 3's :mod:`py3:urllib.parse` and Python 2's:
 * :func:`py2:urlparse.urlsplit`
 * :func:`py2:urlparse.urlunsplit`
 * :func:`py2:urlparse.splitquery`
+* :func:`py2:urlparse.uses_fragment`
+* :func:`py2:urlparse.uses_netloc`
+* :func:`py2:urlparse.uses_params`
+* :func:`py2:urlparse.uses_query`
+* :func:`py2:urlparse.uses_relative`
 
 and :mod:`py2:urllib`:
 
 * :func:`py2:urllib.quote`
 * :func:`py2:urllib.quote_plus`
+* :func:`py2:urllib.splittag`
+* :func:`py2:urllib.splituser`
 * :func:`py2:urllib.unquote`
 * :func:`py2:urllib.unquote_plus`
 * :func:`py2:urllib.urlencode`
