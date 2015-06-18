@@ -11,7 +11,7 @@
 
 Name:           python-six
 Version:        1.9.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 Group:          Development/Languages
@@ -99,6 +99,9 @@ popd
 
 
 %changelog
+* Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.9.0-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Mon Feb 23 2015 Haïkel Guémar <hguemar@fedoraproject.org> - 1.9.0-1
 - Upstream 1.9.0
 - Packaging cleanups
