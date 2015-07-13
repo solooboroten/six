@@ -30,7 +30,7 @@ BuildRequires:  python3-devel
 BuildRequires:  python3-pytest
 BuildRequires:  python3-tkinter
 %endif
-Provides:       python2-six
+Provides:       python2-six = %{version}-%{release}
 
 %description
 python-six provides simple utilities for wrapping over differences between
