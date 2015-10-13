@@ -11,7 +11,7 @@
 
 Name:           python-six
 Version:        1.9.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 Group:          Development/Languages
@@ -100,6 +100,9 @@ popd
 
 
 %changelog
+* Tue Oct 13 2015 Robert Kuska <rkuska@redhat.com> - 1.9.0-4
+- Rebuilt for Python3.5 rebuild
+
 * Mon Jul 13 2015 Slavek Kabrda <bkabrda@redhat.com> - 1.9.0-3
 - Added python2-six provide to python-six
 
