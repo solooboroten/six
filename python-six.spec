@@ -10,8 +10,8 @@
 %endif
 
 Name:           python-six
-Version:        1.9.0
-Release:        4%{?dist}
+Version:        1.10.0
+Release:        1%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 Group:          Development/Languages
@@ -100,6 +100,9 @@ popd
 
 
 %changelog
+* Fri Nov 13 2015 Slavek Kabrda <bkabrda@redhat.com> - 1.10.0-1
+- Update to 1.10.0
+
 * Tue Oct 13 2015 Robert Kuska <rkuska@redhat.com> - 1.9.0-4
 - Rebuilt for Python3.5 rebuild
 
