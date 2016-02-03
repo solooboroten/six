@@ -11,7 +11,7 @@
 
 Name:           python-six
 Version:        1.10.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 Group:          Development/Languages
@@ -52,35 +52,25 @@ This is the Python 3 build of the module.
 
 %prep
 %setup -q -n six-%{version}
-%if 0%{?with_python3}
-rm -rf %{py3dir}
-cp -a . %{py3dir}
-%endif
 
 
 %build
-%{__python2} setup.py build
+%{py2_build}
 %if 0%{?with_python3}
-pushd %{py3dir}
-%{__python3} setup.py build
-popd
+%{py3_build}
 %endif
 
 %install
 %if 0%{?with_python3}
-pushd %{py3dir}
-%{__python3} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
-popd
+%{py3_install}
 %endif
-%{__python2} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
+%{py2_install}
 
 
 %check
-py.test -rfsxX test_six.py
+py.test-%{python2_version} -rfsxX test_six.py
 %if 0%{?with_python3}
-pushd %{py3dir}
 py.test-%{python3_version} -rfsxX test_six.py
-popd
 %endif
 
 
@@ -95,11 +85,17 @@ popd
 %{!?_licensedir:%global license %%doc}
 %license LICENSE
 %doc README documentation/index.rst
-%{python3_sitelib}/*
+%{python3_sitelib}/six.py
+%{python3_sitelib}/six-*.egg-info/
+%{python3_sitelib}/__pycache__/*
 %endif
 
 
 %changelog
+* Wed Feb 3 2016 Orion Poplawski <orion@cora.nwra.com> - 1.10.0-2
+- Modernize spec
+- Fix python3 package file ownership
+
 * Fri Nov 13 2015 Slavek Kabrda <bkabrda@redhat.com> - 1.10.0-1
 - Update to 1.10.0
 
