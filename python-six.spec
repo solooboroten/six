@@ -11,7 +11,7 @@
 
 Name:           python-six
 Version:        1.10.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 Group:          Development/Languages
@@ -92,6 +92,9 @@ py.test-%{python3_version} -rfsxX test_six.py
 
 
 %changelog
+* Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.10.0-3
+- https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
+
 * Wed Feb 3 2016 Orion Poplawski <orion@cora.nwra.com> - 1.10.0-2
 - Modernize spec
 - Fix python3 package file ownership
