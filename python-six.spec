@@ -1,97 +1,83 @@
-%if 0%{?rhel} && 0%{?rhel} <= 6
-%{!?__python2:        %global __python2 /usr/bin/python2}
-%{!?python2_sitelib:  %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%endif
+%global modname six
 
-%if 0%{?fedora} > 12 || 0%{?rhel} > 7
-%global with_python3 1
-
-%global __python3 python3
-%endif
-
-Name:           python-six
+Name:           python-%{modname}
 Version:        1.10.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
-Group:          Development/Languages
 License:        MIT
-URL:            http://pypi.python.org/pypi/six/
-Source0:        http://pypi.python.org/packages/source/s/six/six-%{version}.tar.gz
+URL:            https://pypi.python.org/pypi/six
+Source0:        https://files.pythonhosted.org/packages/source/%(n=%{modname}; echo ${n:0:1})/%{modname}/%{modname}-%{version}.tar.gz
 
 BuildArch:      noarch
+
+%global _description \
+%%{name} provides simple utilities for wrapping over differences between\
+Python 2 and Python 3.
+
+%description %{_description}
+
+%package -n python2-%{modname}
+Summary:        %{summary}
+%{?python_provide:%python_provide python2-%{modname}}
 BuildRequires:  python2-devel
-# For use by selftests:
-BuildRequires:  pytest
+BuildRequires:  python2-setuptools
+# Testing
+BuildRequires:  python2-pytest
 BuildRequires:  tkinter
-%if 0%{?with_python3}
+
+%description -n python2-%{modname} %{_description}
+
+Python 2 version.
+
+%package -n python3-%{modname}
+Summary:        %{summary}
+%{?system_python_abi}
+%{?python_provide:%python_provide python3-%{modname}}
 BuildRequires:  python3-devel
-# For use by selftests:
+BuildRequires:  python3-setuptools
+# Testing
 BuildRequires:  python3-pytest
 BuildRequires:  python3-tkinter
-%endif
-Provides:       python2-six = %{version}-%{release}
 
-%description
-python-six provides simple utilities for wrapping over differences between
-Python 2 and Python 3.
+%description -n python3-%{modname} %{_description}
 
-This is the Python 2 build of the module.
-
-%if 0%{?with_python3}
-%package -n python3-six
-Summary:        Python 2 and 3 compatibility utilities
-Group:          Development/Languages
-
-%description -n python3-six
-python-six provides simple utilities for wrapping over differences between
-Python 2 and Python 3.
-
-This is the Python 3 build of the module.
-%endif
+Python 3 version.
 
 %prep
-%setup -q -n six-%{version}
-
+%autosetup -n %{modname}-%{version}
 
 %build
-%{py2_build}
-%if 0%{?with_python3}
-%{py3_build}
-%endif
+%py2_build
+%py3_build
 
 %install
-%if 0%{?with_python3}
-%{py3_install}
-%endif
-%{py2_install}
-
+%py2_install
+%py3_install
 
 %check
-py.test-%{python2_version} -rfsxX test_six.py
-%if 0%{?with_python3}
-py.test-%{python3_version} -rfsxX test_six.py
-%endif
+py.test-2 -rfsxX test_six.py
+py.test-3 -rfsxX test_six.py
 
-
-%files
-%{!?_licensedir:%global license %%doc}
+%files -n python2-%{modname}
 %license LICENSE
 %doc README documentation/index.rst
-%{python2_sitelib}/*
+%{python2_sitelib}/%{modname}-*.egg-info/
+%{python2_sitelib}/%{modname}.py*
 
-%if 0%{?with_python3}
-%files -n python3-six
-%{!?_licensedir:%global license %%doc}
+%files -n python3-%{modname}
 %license LICENSE
 %doc README documentation/index.rst
-%{python3_sitelib}/six.py
-%{python3_sitelib}/six-*.egg-info/
-%{python3_sitelib}/__pycache__/*
-%endif
-
+%{python3_sitelib}/%{modname}-*.egg-info/
+%{python3_sitelib}/%{modname}.py
+%{python3_sitelib}/__pycache__/%{modname}.*
 
 %changelog
+* Tue Aug 09 2016 Igor Gnatenko <ignatenko@redhat.com> - 1.10.0-4
+- Modernize spec more
+- Depend on system-python(abi)
+- Cleanups
+
 * Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.10.0-3
 - https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
 
