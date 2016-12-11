@@ -2,7 +2,7 @@
 
 Name:           python-%{modname}
 Version:        1.10.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 License:        MIT
@@ -37,8 +37,8 @@ Summary:        %{summary}
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
 # Testing
-BuildRequires:  python3-pytest
-BuildRequires:  python3-tkinter
+#BuildRequires:  python3-pytest
+#BuildRequires:  python3-tkinter
 
 %description -n python3-%{modname} %{_description}
 
@@ -57,7 +57,7 @@ Python 3 version.
 
 %check
 py.test-2 -rfsxX test_six.py
-py.test-3 -rfsxX test_six.py
+#py.test-3 -rfsxX test_six.py
 
 %files -n python2-%{modname}
 %license LICENSE
@@ -73,6 +73,10 @@ py.test-3 -rfsxX test_six.py
 %{python3_sitelib}/__pycache__/%{modname}.*
 
 %changelog
+* Fri Dec 09 2016 Charalampos Stratakis <cstratak@redhat.com> - 1.10.0-5
+- Rebuild for Python 3.6
+- Disable python3 tests
+
 * Tue Aug 09 2016 Igor Gnatenko <ignatenko@redhat.com> - 1.10.0-4
 - Modernize spec more
 - Depend on system-python(abi)
