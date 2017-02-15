@@ -1,8 +1,12 @@
 %global modname six
+%global build_wheel 1
+
+%global python2_wheelname %{modname}-%{version}-py2.py3-none-any.whl
+%global python3_wheelname %python2_wheelname
 
 Name:           python-%{modname}
 Version:        1.10.0
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 License:        MIT
@@ -26,6 +30,11 @@ BuildRequires:  python2-setuptools
 BuildRequires:  python2-pytest
 BuildRequires:  tkinter
 
+%if 0%{?build_wheel}
+BuildRequires:  python2-pip
+BuildRequires:  python-wheel
+%endif
+
 %description -n python2-%{modname} %{_description}
 
 Python 2 version.
@@ -40,6 +49,11 @@ BuildRequires:  python3-setuptools
 BuildRequires:  python3-pytest
 BuildRequires:  python3-tkinter
 
+%if 0%{?build_wheel}
+BuildRequires:  python%{python3_pkgversion}-pip
+BuildRequires:  python%{python3_pkgversion}-wheel
+%endif
+
 %description -n python3-%{modname} %{_description}
 
 Python 3 version.
@@ -48,12 +62,28 @@ Python 3 version.
 %autosetup -n %{modname}-%{version}
 
 %build
+%if 0%{?build_wheel}
+%py2_build_wheel
+%else
 %py2_build
+%endif
+%if 0%{?build_wheel}
+%py3_build_wheel
+%else
 %py3_build
+%endif
 
 %install
+%if 0%{?build_wheel}
+%py2_install_wheel %{python2_wheelname}
+%else
 %py2_install
+%endif
+%if 0%{?build_wheel}
+%py3_install_wheel %{python3_wheelname}
+%else
 %py3_install
+%endif
 
 %check
 py.test-2 -rfsxX test_six.py
@@ -62,17 +92,20 @@ py.test-3 -rfsxX test_six.py
 %files -n python2-%{modname}
 %license LICENSE
 %doc README documentation/index.rst
-%{python2_sitelib}/%{modname}-*.egg-info/
+%{python2_sitelib}/%{modname}-*.dist-info/
 %{python2_sitelib}/%{modname}.py*
 
 %files -n python3-%{modname}
 %license LICENSE
 %doc README documentation/index.rst
-%{python3_sitelib}/%{modname}-*.egg-info/
+%{python3_sitelib}/%{modname}-*.dist-info/
 %{python3_sitelib}/%{modname}.py
 %{python3_sitelib}/__pycache__/%{modname}.*
 
 %changelog
+* Mon Feb 13 2017 Charalampos Stratakis <cstratak@redhat.com> - 1.10.0-8
+- Rebuild as wheel
+
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.10.0-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
