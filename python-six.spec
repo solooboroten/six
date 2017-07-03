@@ -6,7 +6,7 @@
 
 Name:           python-%{modname}
 Version:        1.10.0
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 License:        MIT
@@ -28,11 +28,11 @@ BuildRequires:  python2-devel
 BuildRequires:  python2-setuptools
 # Testing
 BuildRequires:  python2-pytest
-BuildRequires:  tkinter
+BuildRequires:  python2-tkinter
 
 %if 0%{?build_wheel}
 BuildRequires:  python2-pip
-BuildRequires:  python-wheel
+BuildRequires:  python2-wheel
 %endif
 
 %description -n python2-%{modname} %{_description}
@@ -103,6 +103,9 @@ py.test-3 -rfsxX test_six.py
 %{python3_sitelib}/__pycache__/%{modname}.*
 
 %changelog
+* Mon Jul 03 2017 Petr Viktorin <pviktori@redhat.com> - 1.10.0-9
+- Fix unversioned Python BuildRequires
+
 * Mon Feb 13 2017 Charalampos Stratakis <cstratak@redhat.com> - 1.10.0-8
 - Rebuild as wheel
 
