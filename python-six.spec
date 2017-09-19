@@ -11,8 +11,8 @@
 %global python3_wheelname %python2_wheelname
 
 Name:           python-%{modname}
-Version:        1.10.0
-Release:        11%{?dist}
+Version:        1.11.0
+Release:        1%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 License:        MIT
@@ -149,7 +149,7 @@ py.test-3 -rfsxX test_six.py
 %if %{with python2}
 %files -n python2-%{modname}
 %license LICENSE
-%doc README documentation/index.rst
+%doc README.rst documentation/index.rst
 %{python2_sitelib}/%{modname}-*.dist-info/
 %{python2_sitelib}/%{modname}.py*
 %endif
@@ -157,7 +157,7 @@ py.test-3 -rfsxX test_six.py
 %if %{with python3}
 %files -n python3-%{modname}
 %license LICENSE
-%doc README documentation/index.rst
+%doc README.rst documentation/index.rst
 %{python3_sitelib}/%{modname}-*.dist-info/
 %{python3_sitelib}/%{modname}.py
 %{python3_sitelib}/__pycache__/%{modname}.*
@@ -166,13 +166,16 @@ py.test-3 -rfsxX test_six.py
 %if %{with platform_python}
 %files -n platform-python-%{modname}
 %license LICENSE
-%doc README documentation/index.rst
+%doc README.rst documentation/index.rst
 %{platform_python_sitelib}/%{modname}-*.egg-info/
 %{platform_python_sitelib}/%{modname}.py
 %{platform_python_sitelib}/__pycache__/%{modname}.*
 %endif
 
 %changelog
+* Tue Sep 19 2017 Charalampos Stratakis <cstratak@redhat.com> - 1.11.0-1
+- Update to 1.11.0
+
 * Thu Aug 10 2017 Tomas Orsava <torsava@redhat.com> - 1.10.0-11
 - Added the platform-python subpackage
 
