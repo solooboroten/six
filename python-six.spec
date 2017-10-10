@@ -9,8 +9,8 @@
 %endif
 
 Name:           python-six
-Version:        1.1.0
-Release:        4%{?dist}
+Version:        1.2.0
+Release:        1%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 Group:          Development/Languages
@@ -21,8 +21,14 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
 BuildRequires:  python-devel
+# For use by selftests:
+BuildRequires:  pytest
+BuildRequires:  tkinter
 %if 0%{?with_python3}
 BuildRequires:  python3-devel
+# For use by selftests:
+BuildRequires:  python3-pytest
+BuildRequires:  python3-tkinter
 %endif
 
 %description
@@ -72,6 +78,14 @@ popd
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%check
+py.test -rfsxX test_six.py
+%if 0%{?with_python3}
+pushd %{py3dir}
+py.test-%{python3_version} -rfsxX test_six.py
+popd
+%endif
+
 
 %files
 %defattr(-,root,root,-)
@@ -87,6 +101,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Aug 29 2012 David Malcolm <dmalcolm@redhat.com> - 1.2.0-1
+- 1.2.0 (rhbz#852658)
+- add %%check section
+
 * Sat Aug 04 2012 David Malcolm <dmalcolm@redhat.com> - 1.1.0-4
 - rebuild for https://fedoraproject.org/wiki/Features/Python_3.3
 
