@@ -9,7 +9,7 @@
 %endif
 
 Name:           python-six
-Version:        1.4.1
+Version:        1.5.2
 Release:        1%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
@@ -17,10 +17,9 @@ Group:          Development/Languages
 License:        MIT
 URL:            http://pypi.python.org/pypi/six/
 Source0:        http://pypi.python.org/packages/source/s/six/six-%{version}.tar.gz
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
-BuildRequires:  python-devel
+BuildRequires:  python2-devel
 # For use by selftests:
 BuildRequires:  pytest
 BuildRequires:  tkinter
@@ -66,7 +65,6 @@ popd
 %endif
 
 %install
-rm -rf $RPM_BUILD_ROOT
 %if 0%{?with_python3}
 pushd %{py3dir}
 %{__python3} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
@@ -74,9 +72,6 @@ popd
 %endif
 %{__python} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %check
 py.test -rfsxX test_six.py
@@ -88,19 +83,20 @@ popd
 
 
 %files
-%defattr(-,root,root,-)
 %doc LICENSE README documentation/index.rst
 %{python_sitelib}/*
 
 %if 0%{?with_python3}
 %files -n python3-six
-%defattr(-,root,root,-)
 %doc LICENSE README documentation/index.rst
 %{python3_sitelib}/*
 %endif
 
 
 %changelog
+* Fri Mar 07 2014 Matthias Runge <mrunge@redhat.com> - 1.5.2-1
+- upgrade to 1.5.2 (rhbz#1048819)
+
 * Mon Sep 16 2013 Bohuslav Kabrda <bkabrda@redhat.com> - 1.4.1-1
 - 1.4.1
 
