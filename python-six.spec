@@ -1,12 +1,16 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 
+%if 0%{?fedora} > 12 || 0%{?rhel} > 7
+%global with_python3 1
+
 %global __python3 python3
 
 %{!?python3_sitelib: %global python3_sitelib %(%{__python3} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%endif
 
 Name:           python-six
 Version:        1.1.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 Group:          Development/Languages
@@ -17,7 +21,9 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
 BuildRequires:  python-devel
+%if 0%{?with_python3}
 BuildRequires:  python3-devel
+%endif
 
 %description
 python-six provides simple utilities for wrapping over differences between
@@ -25,6 +31,7 @@ Python 2 and Python 3.
 
 This is the Python 2 build of the module.
 
+%if 0%{?with_python3}
 %package -n python3-six
 Summary:        Python 2 and 3 compatibility utilities
 Group:          Development/Languages
@@ -34,19 +41,32 @@ python-six provides simple utilities for wrapping over differences between
 Python 2 and Python 3.
 
 This is the Python 3 build of the module.
+%endif
 
 %prep
 %setup -q -n six-%{version}
+%if 0%{?with_python3}
+rm -rf %{py3dir}
+cp -a . %{py3dir}
+%endif
 
 
 %build
 %{__python} setup.py build
+%if 0%{?with_python3}
+pushd %{py3dir}
 %{__python3} setup.py build
+popd
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__python} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
+%if 0%{?with_python3}
+pushd %{py3dir}
 %{__python3} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
+popd
+%endif
+%{__python} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 
 
 %clean
@@ -58,13 +78,18 @@ rm -rf $RPM_BUILD_ROOT
 %doc LICENSE README documentation/index.rst
 %{python_sitelib}/*
 
+%if 0%{?with_python3}
 %files -n python3-six
 %defattr(-,root,root,-)
 %doc LICENSE README documentation/index.rst
 %{python3_sitelib}/*
+%endif
 
 
 %changelog
+* Fri Jun 22 2012 Ralph Bean <rbean@redhat.com> - 1.1.0-2
+- Conditionalized python3-six, allowing an el6 build.
+
 * Tue Feb  7 2012 David Malcolm <dmalcolm@redhat.com> - 1.1.0-1
 - 1.1.0
 
