@@ -9,7 +9,7 @@
 %endif
 
 Name:           python-six
-Version:        1.5.2
+Version:        1.6.1
 Release:        1%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
@@ -94,6 +94,9 @@ popd
 
 
 %changelog
+* Tue Apr 29 2014 Matthias Runge <mrugne@redhat.com> - 1.6.1-1
+- upgrade to 1.6.1 (rhbz#1076578)
+
 * Fri Mar 07 2014 Matthias Runge <mrunge@redhat.com> - 1.5.2-1
 - upgrade to 1.5.2 (rhbz#1048819)
 
