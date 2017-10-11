@@ -1,15 +1,16 @@
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%if 0%{?rhel} && 0%{?rhel} <= 6
+%{!?__python2:        %global __python2 /usr/bin/python2}
+%{!?python2_sitelib:  %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%endif
 
 %if 0%{?fedora} > 12 || 0%{?rhel} > 7
 %global with_python3 1
 
 %global __python3 python3
-
-%{!?python3_sitelib: %global python3_sitelib %(%{__python3} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 %endif
 
 Name:           python-six
-Version:        1.7.3
+Version:        1.9.0
 Release:        1%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
@@ -57,7 +58,7 @@ cp -a . %{py3dir}
 
 
 %build
-%{__python} setup.py build
+%{__python2} setup.py build
 %if 0%{?with_python3}
 pushd %{py3dir}
 %{__python3} setup.py build
@@ -70,7 +71,7 @@ pushd %{py3dir}
 %{__python3} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 popd
 %endif
-%{__python} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
+%{__python2} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 
 
 %check
@@ -83,17 +84,31 @@ popd
 
 
 %files
-%doc LICENSE README documentation/index.rst
-%{python_sitelib}/*
+%{!?_licensedir:%global license %%doc}
+%license LICENSE
+%doc README documentation/index.rst
+%{python2_sitelib}/*
 
 %if 0%{?with_python3}
 %files -n python3-six
-%doc LICENSE README documentation/index.rst
+%{!?_licensedir:%global license %%doc}
+%license LICENSE
+%doc README documentation/index.rst
 %{python3_sitelib}/*
 %endif
 
 
 %changelog
+* Mon Feb 23 2015 Haïkel Guémar <hguemar@fedoraproject.org> - 1.9.0-1
+- Upstream 1.9.0
+- Packaging cleanups
+
+* Fri Nov 14 2014 Slavek Kabrda <bkabrda@redhat.com> - 1.8.0-1
+- upgrade to 1.8.0 (rhbz#1105861)
+
+* Sun Aug  3 2014 Tom Callaway <spot@fedoraproject.org> - 1.7.3-2
+- fix license handling
+
 * Thu Jul 31 2014 Pádraig Brady <pbrady@redhat.com> - 1.7.3-1
 - Latest upstream
 
