@@ -9,8 +9,8 @@
 %endif
 
 Name:           python-six
-Version:        1.6.1
-Release:        3%{?dist}
+Version:        1.7.3
+Release:        1%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 Group:          Development/Languages
@@ -94,6 +94,9 @@ popd
 
 
 %changelog
+* Thu Jul 31 2014 Pádraig Brady <pbrady@redhat.com> - 1.7.3-1
+- Latest upstream
+
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.6.1-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
