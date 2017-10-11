@@ -11,7 +11,7 @@
 
 Name:           python-six
 Version:        1.9.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 Group:          Development/Languages
@@ -30,6 +30,7 @@ BuildRequires:  python3-devel
 BuildRequires:  python3-pytest
 BuildRequires:  python3-tkinter
 %endif
+Provides:       python2-six
 
 %description
 python-six provides simple utilities for wrapping over differences between
@@ -99,6 +100,9 @@ popd
 
 
 %changelog
+* Mon Jul 13 2015 Slavek Kabrda <bkabrda@redhat.com> - 1.9.0-3
+- Added python2-six provide to python-six
+
 * Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.9.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
