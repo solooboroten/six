@@ -1,34 +1,24 @@
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%global __python2 /usr/bin/python2.6
+%global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 
-%if 0%{?fedora} > 12 || 0%{?rhel} > 7
-%global with_python3 1
+%global srcname six
 
-%global __python3 python3
-
-%{!?python3_sitelib: %global python3_sitelib %(%{__python3} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%endif
-
-Name:           python-six
+Name:           python-%{srcname}
 Version:        1.7.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 Group:          Development/Languages
 License:        MIT
-URL:            http://pypi.python.org/pypi/six/
-Source0:        http://pypi.python.org/packages/source/s/six/six-%{version}.tar.gz
+URL:            http://pypi.python.org/pypi/%{srcname}/
+Source0:        http://pypi.python.org/packages/source/s/%{srcname}/%{srcname}-%{version}.tar.gz
 
+BuildRoot:      %{_tmppath}/%{srcname}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
-BuildRequires:  python2-devel
-# For use by selftests:
-BuildRequires:  pytest
-BuildRequires:  tkinter
-%if 0%{?with_python3}
-BuildRequires:  python3-devel
-# For use by selftests:
-BuildRequires:  python3-pytest
-BuildRequires:  python3-tkinter
-%endif
+
+BuildRequires:  python26-devel
+BuildRequires:  python26-distribute
+Requires:       python26
 
 %description
 python-six provides simple utilities for wrapping over differences between
@@ -36,68 +26,41 @@ Python 2 and Python 3.
 
 This is the Python 2 build of the module.
 
-%if 0%{?with_python3}
-%package -n python3-six
+%package -n python26-%{srcname}
 Summary:        Python 2 and 3 compatibility utilities
 Group:          Development/Languages
+Requires:       python26
 
-%description -n python3-six
+%description -n python26-%{srcname}
 python-six provides simple utilities for wrapping over differences between
 Python 2 and Python 3.
 
-This is the Python 3 build of the module.
-%endif
+This is the Python 2 build of the module.
 
 %prep
-%setup -q -n six-%{version}
-%if 0%{?with_python3}
-rm -rf %{py3dir}
-cp -a . %{py3dir}
-%endif
-
+%setup -q -n %{srcname}-%{version}
 
 %build
-%{__python} setup.py build
-%if 0%{?with_python3}
-pushd %{py3dir}
-%{__python3} setup.py build
-popd
-%endif
+%{__python2} setup.py build
 
 %install
-%if 0%{?with_python3}
-pushd %{py3dir}
-%{__python3} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
-popd
-%endif
-%{__python} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
+rm -rf %{buildroot}
+%{__python2} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 
+%clean
+rm -rf %{buildroot}
 
-%check
-py.test -rfsxX test_six.py
-%if 0%{?with_python3}
-pushd %{py3dir}
-py.test-%{python3_version} -rfsxX test_six.py
-popd
-%endif
-
-
-%files
+%files -n python26-%{srcname}
+%defattr(-,root,root,-)
 %{!?_licensedir:%global license %%doc}
 %license LICENSE
 %doc README documentation/index.rst
-%{python_sitelib}/*
-
-%if 0%{?with_python3}
-%files -n python3-six
-%{!?_licensedir:%global license %%doc}
-%license LICENSE
-%doc README documentation/index.rst
-%{python3_sitelib}/*
-%endif
-
+%{python2_sitelib}/*
 
 %changelog
+* Wed Aug  6 2014 Erik Johnson <erik@saltstack.com> - 1.7.3-3
+- Initial EL5 build
+
 * Sun Aug  3 2014 Tom Callaway <spot@fedoraproject.org> - 1.7.3-2
 - fix license handling
 
