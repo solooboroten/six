@@ -6,7 +6,7 @@
 
 Name:           python-%{modname}
 Version:        1.10.0
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 License:        MIT
@@ -103,6 +103,9 @@ py.test-3 -rfsxX test_six.py
 %{python3_sitelib}/__pycache__/%{modname}.*
 
 %changelog
+* Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.10.0-10
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
 * Mon Jul 03 2017 Petr Viktorin <pviktori@redhat.com> - 1.10.0-9
 - Fix unversioned Python BuildRequires
 
