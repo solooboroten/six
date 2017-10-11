@@ -9,8 +9,8 @@
 %endif
 
 Name:           python-six
-Version:        1.7.3
-Release:        2%{?dist}
+Version:        1.8.0
+Release:        1%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 Group:          Development/Languages
@@ -98,6 +98,9 @@ popd
 
 
 %changelog
+* Fri Nov 14 2014 Slavek Kabrda <bkabrda@redhat.com> - 1.8.0-1
+- upgrade to 1.8.0 (rhbz#1105861)
+
 * Sun Aug  3 2014 Tom Callaway <spot@fedoraproject.org> - 1.7.3-2
 - fix license handling
 
