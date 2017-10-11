@@ -1,12 +1,18 @@
 %global modname six
 %global build_wheel 1
 
+%bcond_without tests
+
+%bcond_without python2
+%bcond_without python3
+%bcond_without platform_python
+
 %global python2_wheelname %{modname}-%{version}-py2.py3-none-any.whl
 %global python3_wheelname %python2_wheelname
 
 Name:           python-%{modname}
 Version:        1.10.0
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary:        Python 2 and 3 compatibility utilities
 
 License:        MIT
@@ -21,14 +27,17 @@ Python 2 and Python 3.
 
 %description %{_description}
 
+%if %{with python2}
 %package -n python2-%{modname}
 Summary:        %{summary}
 %{?python_provide:%python_provide python2-%{modname}}
 BuildRequires:  python2-devel
 BuildRequires:  python2-setuptools
-# Testing
+
+%if %{with tests}
 BuildRequires:  python2-pytest
 BuildRequires:  python2-tkinter
+%endif
 
 %if 0%{?build_wheel}
 BuildRequires:  python2-pip
@@ -36,18 +45,22 @@ BuildRequires:  python2-wheel
 %endif
 
 %description -n python2-%{modname} %{_description}
-
 Python 2 version.
 
+%endif
+
+
+%if %{with python3}
 %package -n python3-%{modname}
 Summary:        %{summary}
-%{?system_python_abi}
 %{?python_provide:%python_provide python3-%{modname}}
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
-# Testing
+
+%if %{with tests}
 BuildRequires:  python3-pytest
 BuildRequires:  python3-tkinter
+%endif
 
 %if 0%{?build_wheel}
 BuildRequires:  python%{python3_pkgversion}-pip
@@ -55,54 +68,114 @@ BuildRequires:  python%{python3_pkgversion}-wheel
 %endif
 
 %description -n python3-%{modname} %{_description}
-
 Python 3 version.
+
+%endif
+
+
+%if %{with platform_python}
+%package -n platform-python-%{modname}
+Summary:        %{summary}
+BuildRequires:  platform-python-devel
+BuildRequires:  platform-python-setuptools
+
+%if %{with tests}
+BuildRequires:  platform-python-pytest
+BuildRequires:  platform-python-tkinter
+%endif
+
+%description -n platform-python-%{modname} %{_description}
+Platform-Python version.
+
+%endif
+
 
 %prep
 %autosetup -n %{modname}-%{version}
 
+
 %build
+%if %{with python2}
 %if 0%{?build_wheel}
 %py2_build_wheel
 %else
 %py2_build
 %endif
+%endif
+
+%if %{with python3}
 %if 0%{?build_wheel}
 %py3_build_wheel
 %else
 %py3_build
 %endif
+%endif
+
+%if %{with platform_python}
+%platform_py_build
+%endif
+
 
 %install
+%if %{with python2}
 %if 0%{?build_wheel}
 %py2_install_wheel %{python2_wheelname}
 %else
 %py2_install
 %endif
+%endif
+
+%if %{with python3}
 %if 0%{?build_wheel}
 %py3_install_wheel %{python3_wheelname}
 %else
 %py3_install
 %endif
+%endif
 
+%if %{with platform_python}
+%platform_py_install
+%endif
+
+
+%if %{with tests}
 %check
 py.test-2 -rfsxX test_six.py
 py.test-3 -rfsxX test_six.py
+%{__platform_python} -m pytest -rfsxX test_six.py
+%endif
 
+
+%if %{with python2}
 %files -n python2-%{modname}
 %license LICENSE
 %doc README documentation/index.rst
 %{python2_sitelib}/%{modname}-*.dist-info/
 %{python2_sitelib}/%{modname}.py*
+%endif
 
+%if %{with python3}
 %files -n python3-%{modname}
 %license LICENSE
 %doc README documentation/index.rst
 %{python3_sitelib}/%{modname}-*.dist-info/
 %{python3_sitelib}/%{modname}.py
 %{python3_sitelib}/__pycache__/%{modname}.*
+%endif
+
+%if %{with platform_python}
+%files -n platform-python-%{modname}
+%license LICENSE
+%doc README documentation/index.rst
+%{platform_python_sitelib}/%{modname}-*.egg-info/
+%{platform_python_sitelib}/%{modname}.py
+%{platform_python_sitelib}/__pycache__/%{modname}.*
+%endif
 
 %changelog
+* Thu Aug 10 2017 Tomas Orsava <torsava@redhat.com> - 1.10.0-11
+- Added the platform-python subpackage
+
 * Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.10.0-10
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
 
